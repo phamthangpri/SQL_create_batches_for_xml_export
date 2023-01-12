@@ -1,5 +1,33 @@
+/*************************************************************************************************************
+ Author:            Thi Thang Pham
+ Description:       Generat XML by batch
+					
+ Parameter(s):      @quarter
+					@generation_date 
+					@year
+
+ *************************************************************************************************************/
+
+ 
+CREATE OR ALTER PROCEDURE sp_generate_xml
+			@quarter VARCHAR(2),
+			@generation_date SMALLDATETIME NULL,
+			@year SMALLINT = NULL
+
+AS
+BEGIN 
 
 
+
+DECLARE	
+		@startdate DATE = NULL, 
+		@enddate DATE = NULL,
+		@filename VARCHAR(200),
+		@t1 DATETIME,
+		@t2 DATETIME
+		;
+SET @filename = 'prefix_file_name' + CAST(@year AS VARCHAR(4)) + '.' + @quarter
+				+ '.' CONVERT(VARCHAR,@generation_date,20)
 -------------------------------------XML Export --------------------------------------------------------
 ---Create different batches to export -------------
 
@@ -19,7 +47,7 @@ ORDER BY batch_number
 SELECT batch_number,
 		filename,
 	(SELECT 
-		(------corum
+		(------children 1
 		SELECT
 			 @code_version																					AS 'xml/version'
 			,@generation_date																				AS 'xml/generation_date'
