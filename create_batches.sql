@@ -77,8 +77,9 @@ SELECT batch_number,
 	FOR XML PATH(''),TYPE, ROOT('root')
 	)																					AS xml_file
 	FROM ##BATCH_NUMBER b
-OPTION(RECOMPILE)
+OPTION(RECOMPILE) 
 END
+
 
 
 FLOOR(((ROW_NUMBER() OVER (ORDER BY c.associateId))-1)/10000)+1								AS batch_number,
