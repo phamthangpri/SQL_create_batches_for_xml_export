@@ -58,28 +58,14 @@ ORDER BY batch_number
 -------------------------------------XML Export --------------------------------------------------------
 SELECT batch_number,
 		filename,
-		(
-		SELECT
+		(SELECT
 			 @code_version																					AS 'xml/version'
 			,@generation_date																				AS 'xml/generation_date'
 			,LOWER(NEWID())																					AS 'xml/id'
 			,@year																							AS 'general/parameters/year'
-
-			FOR XML PATH(''),TYPE)																			AS associate																					
-			----- end associate
 		FROM ##TABLE_1 a
-		WHERE 
-			(@sample_auto = 1 AND EXISTS (SELECT 1 FROM ##SAMPLE_TEST st WHERE st.associateId = a.associateId))
-			OR @sample_auto = 0 
-			AND a.batch_number = b.batch_number
-		FOR XML PATH('associates'),TYPE
-		)																									AS [nealan/data]
-	FOR XML PATH(''),TYPE, ROOT('root')
-	)																					AS xml_file
+		WHERE a.batch_number = b.batch_number
+	FOR XML PATH(''),TYPE, ROOT('root')	)																				AS xml_file
 	FROM ##BATCH_NUMBER b
 OPTION(RECOMPILE) 
 END
-
-
-
-FLOOR(((ROW_NUMBER() OVER (ORDER BY c.associateId))-1)/10000)+1								AS batch_number,
