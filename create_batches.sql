@@ -19,19 +19,14 @@ BEGIN
 
 
 
-DECLARE	
-		@startdate DATE = NULL, 
-		@enddate DATE = NULL,
-		@filename VARCHAR(200),
-		@t1 DATETIME,
-		@t2 DATETIME
+DECLARE	@filename VARCHAR(200)
 		;
 SET @filename = 'prefix_file_name' + CAST(@year AS VARCHAR(4)) + '.' + @quarter
 				+ '.' CONVERT(VARCHAR,@generation_date,20)
 
 
 ---- STEP 1: Create an id for each record 
-IF OBJECT_ID('tempdb..##TABLE_1') IS NOT NULL --vue par associate
+IF OBJECT_ID('tempdb..##TABLE_1') IS NOT NULL 
         DROP TABLE ##TABLE_1
 	SELECT  
 		FLOOR(((ROW_NUMBER() OVER (ORDER BY c.contract_id))-1)/10000)+1								AS batch_number,
@@ -55,17 +50,21 @@ FROM ##TABLE_1
 GROUP BY batch_number
 ORDER BY batch_number
 
--------------------------------------XML Export --------------------------------------------------------
+-------STEP 3 : XML Export --------------------------------------------------------
 SELECT batch_number,
 		filename,
 		(SELECT
-			 @code_version																					AS 'xml/version'
-			,@generation_date																				AS 'xml/generation_date'
-			,LOWER(NEWID())																					AS 'xml/id'
+			 @generation_date																				AS 'xml/generation_date'
+			,@quarter																						AS 'xml/quarter' 
+			,contract_id																					AS 'xml/id'
 			,@year																							AS 'general/parameters/year'
 		FROM ##TABLE_1 a
 		WHERE a.batch_number = b.batch_number
 	FOR XML PATH(''),TYPE, ROOT('root')	)																				AS xml_file
 	FROM ##BATCH_NUMBER b
-OPTION(RECOMPILE) 
+
+
+
+
 END
+GO
