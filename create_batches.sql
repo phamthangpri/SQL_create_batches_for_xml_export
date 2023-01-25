@@ -1,6 +1,6 @@
 /*************************************************************************************************************
  Author:            Thi Thang Pham
- Description:       Generat XML by batch
+ Description:       Generat XML files by batch
 					
  Parameter(s):      @quarter
 					@generation_date 
@@ -18,7 +18,6 @@ AS
 BEGIN 
 
 
-
 DECLARE	@filename VARCHAR(200)
 		;
 SET @filename = 'prefix_file_name' + CAST(@year AS VARCHAR(4)) + '.' + @quarter
@@ -29,7 +28,7 @@ SET @filename = 'prefix_file_name' + CAST(@year AS VARCHAR(4)) + '.' + @quarter
 IF OBJECT_ID('tempdb..##TABLE_1') IS NOT NULL 
         DROP TABLE ##TABLE_1
 	SELECT  
-		FLOOR(((ROW_NUMBER() OVER (ORDER BY c.contract_id))-1)/10000)+1								AS batch_number,
+		FLOOR(((ROW_NUMBER() OVER (ORDER BY c.contract_id))-1)/10000)+1								AS batch_number, --change 10000 to number of rows that you need for a batch
 		c.contract_id 
 	INTO ##TABLE_1
 	FROM table_contract c
@@ -62,9 +61,6 @@ SELECT batch_number,
 		WHERE a.batch_number = b.batch_number
 	FOR XML PATH(''),TYPE, ROOT('root')	)																				AS xml_file
 	FROM ##BATCH_NUMBER b
-
-
-
 
 END
 GO
