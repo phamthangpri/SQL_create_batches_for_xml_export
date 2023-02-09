@@ -45,16 +45,16 @@ END
 
 IF OBJECT_ID('tempdb..##BATCH_NUMBER') IS NOT NULL 
 		DROP TABLE ##BATCH_NUMBER
-SELECT batch_number,
-	   @filename 
-	   + ' '+ CAST(batch_number AS VARCHAR(20)) 
-	   + '.' + CAST((SELECT MAX(batch_number) 
-					 FROM ##TABLE_1) AS VARCHAR(20))			AS filename
-INTO ##BATCH_NUMBER
-FROM ##TABLE_1
-GROUP BY batch_number
-ORDER BY batch_number
-
+	SELECT batch_number,
+		@filename 
+		+ ' '+ CAST(batch_number AS VARCHAR(20)) 
+		+ '.' + CAST((SELECT MAX(batch_number) 
+						FROM ##TABLE_1) AS VARCHAR(20))			AS filename
+	INTO ##BATCH_NUMBER
+	FROM ##TABLE_1
+	GROUP BY batch_number
+	ORDER BY batch_number
+END
 -------STEP 3 : XML Export --------------------------------------------------------
 SELECT batch_number,
 		filename,
