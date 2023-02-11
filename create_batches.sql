@@ -34,7 +34,7 @@ SET @filename = 'prefix_file_name' + CAST(@year AS VARCHAR(4)) + '.' + @quarter
 IF OBJECT_ID('tempdb..##TABLE_1') IS NOT NULL 
         DROP TABLE ##TABLE_1
 	SELECT  
-		FLOOR(((ROW_NUMBER() OVER (ORDER BY c.contract_id))-1)/10000)+1								AS batch_number, --change 10000 to number of rows that you need for a batch
+		FLOOR(((ROW_NUMBER() OVER (ORDER BY c.contract_id))-1)/10000)+1			AS batch_number, --change 10000 to number of rows that you need for a batch
 		c.contract_id 
 	INTO ##TABLE_1
 	FROM table_contract c
@@ -49,7 +49,7 @@ IF OBJECT_ID('tempdb..##BATCH_NUMBER') IS NOT NULL
 		@filename 
 		+ ' '+ CAST(batch_number AS VARCHAR(20)) 
 		+ '.' + CAST((SELECT MAX(batch_number) 
-						FROM ##TABLE_1) AS VARCHAR(20))			AS filename
+						FROM ##TABLE_1) AS VARCHAR(20))							AS filename
 	INTO ##BATCH_NUMBER
 	FROM ##TABLE_1
 	GROUP BY batch_number
@@ -59,13 +59,13 @@ END
 SELECT batch_number,
 		filename,
 		(SELECT
-			 @generation_date																				AS 'xml/generation_date'
-			,@quarter																						AS 'xml/quarter' 
-			,contract_id																					AS 'xml/id'
-			,@year																							AS 'general/parameters/year'
+			 @generation_date													AS 'xml/generation_date'
+			,@quarter															AS 'xml/quarter' 
+			,contract_id														AS 'xml/id'
+			,@year																AS 'general/parameters/year'
 		FROM ##TABLE_1 a
 		WHERE a.batch_number = b.batch_number
-	FOR XML PATH(''),TYPE, ROOT('root')	)																				AS xml_file
+	FOR XML PATH(''),TYPE, ROOT('root')	)										AS xml_file
 	FROM ##BATCH_NUMBER b
 
 END
