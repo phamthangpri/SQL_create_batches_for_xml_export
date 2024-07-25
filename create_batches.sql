@@ -59,10 +59,10 @@ END
 SELECT batch_number,
 		filename,
 		(SELECT
-			 @generation_date													AS 'xml/generation_date'
-			,@quarter															AS 'xml/quarter' 
-			,contract_id														AS 'xml/id'
-			,@year																AS 'general/parameters/year'
+			 @generation_date											AS 'xml/generation_date'
+			,@quarter												AS 'xml/quarter' 
+			,contract_id												AS 'xml/id'
+			,@year													AS 'general/parameters/year'
 		FROM ##TABLE_1 a
 		WHERE a.batch_number = b.batch_number
 	FOR XML PATH(''),TYPE, ROOT('root')	)										AS xml_file
